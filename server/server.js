@@ -15,7 +15,7 @@ app.use(cors())
 app.use(bodyParser.json())
 
 // route 
-app.post('/users/signup', userRoutes )
+app.use('/api', userRoutes )
 
 
 sequelize

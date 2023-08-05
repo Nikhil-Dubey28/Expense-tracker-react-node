@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
-// import './singup.css'
+import './login.css'
 
 const Login =() =>{
     const [formData, setFormData] = useState({
@@ -41,9 +41,9 @@ const Login =() =>{
         <div className="container d-flex align-items-center justify-content-center vh-100">
         <div className="row justify-content-center align-items-center">
           {/* <div className="col-md-12 col-lg-12"> */}
-          <div>
+          <div className='form-container'>
             <form className="p-5 bg-light" onSubmit={handleFormSubmit}>
-              <h2 className="text-center mb-5">Login</h2>
+              <h2 className="text-center mb-5 login-text">Login</h2>
               {/* <div className="mb-3">
                 <label htmlFor="name" className="form-label">Name</label>
                 <input type="text" className="form-control" id="name" placeholder="Enter your name" name='name' required onChange={handleNameChange}/>
@@ -59,7 +59,7 @@ const Login =() =>{
                 <input type="password" className="form-control" id="password" placeholder="Password" name='password' required onChange={handlePasswordChange}/>
               </div>
                 <div className='d-flex justify-content-center'>
-                <button type="submit" className="btn btn-dark btn-block text-center mt-5">Login</button>
+                <button type="submit" className="btn btn-dark btn-block text-center mt-5 w-50">Login</button>
                 </div>
               
             </form>
