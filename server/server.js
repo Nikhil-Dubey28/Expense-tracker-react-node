@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const User = require('./model/User')
 const userRoutes = require('./routes/userRoutes')
+const expenseRoutes = require('./routes/expenseRoutes')
 const sequelize = require('./database/configDatabase')
 
 
@@ -16,6 +17,7 @@ app.use(bodyParser.json())
 
 // route 
 app.use('/api', userRoutes )
+app.use('/api', expenseRoutes)
 
 
 sequelize

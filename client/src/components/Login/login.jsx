@@ -1,14 +1,17 @@
 import React, {useState} from 'react'
+import {useNavigate} from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
 import './login.css'
 
 const Login =() =>{
+  const navigate = useNavigate()
+
     const [formData, setFormData] = useState({
+      email: '',
+      password: ''
+    });
         
-        email: '',
-        password: ''
-      });
      
       
       const handleEmailChange = (event) => {
@@ -29,10 +32,15 @@ const Login =() =>{
         event.preventDefault();
       
         try {
-          const response = await axios.post('http://localhost:3000/users/login', formData);
+          const response = await axios.post('http://localhost:3000/api/users/login', formData);
           console.log(response.data);
+          if(response.data === 'user login successful'){
+            navigate('/expenses')
+          }else{
+            alert('wrong credentials')
+          }
         } catch (error) {
-          console.log(error);
+          console.log(error.response);
         }
       }
       

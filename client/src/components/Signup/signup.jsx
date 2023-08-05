@@ -1,9 +1,11 @@
 import React, {useState} from 'react'
+import { useNavigate } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
 import './signup.css'
 
 const Signup =() =>{
+  const navigate = useNavigate()
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -34,10 +36,13 @@ const Signup =() =>{
         event.preventDefault();
       
         try {
-          const response = await axios.post('http://localhost:3000/users/signup', formData);
+          const response = await axios.post('http://localhost:3000/api/users/signup', formData);
           console.log(response.data);
+          if(response.status === 201){
+            navigate('/login')
+          }
         } catch (error) {
-          console.log(error);
+          console.log(error.response);
         }
       }
       
