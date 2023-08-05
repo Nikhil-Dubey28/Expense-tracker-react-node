@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const User = require('./model/User')
+const userRoutes = require('./routes/userRoutes')
 const sequelize = require('./database/configDatabase')
 
 
@@ -14,17 +15,7 @@ app.use(cors())
 app.use(bodyParser.json())
 
 // route 
-app.post('/users/signup', async(req,res) =>{
-    try {
-        const {name,email,password} = req.body
-        const user = await new User.create({name,email,password})
-
-        res.status(201).json(user)
-    }catch(err) {
-        console.log('error')
-        res.status(500).json({message: 'internal server error'})
-    }
-})
+app.post('/users/signup', userRoutes )
 
 
 sequelize

@@ -37,7 +37,7 @@ const Signup =() =>{
           const response = await axios.post('http://localhost:3000/users/signup', formData);
           console.log(response.data);
         } catch (error) {
-          console.error(error);
+          console.log(error);
         }
       }
       
@@ -47,21 +47,21 @@ const Signup =() =>{
         <div className="row justify-content-center align-items-center">
           {/* <div className="col-md-12 col-lg-12"> */}
           <div>
-            <form className="p-5 bg-light method='POST'" onSubmit={handleFormSubmit}>
+            <form className="p-5 bg-light" onSubmit={handleFormSubmit}>
               <h2 className="text-center mb-5">Register</h2>
               <div className="mb-3">
                 <label htmlFor="name" className="form-label">Name</label>
-                <input type="text" className="form-control" id="name" placeholder="Enter your name" required onChange={handleNameChange}/>
+                <input type="text" className="form-control" id="name" placeholder="Enter your name" name='name' required onChange={handleNameChange}/>
               </div>
   
               <div className="mb-3">
                 <label htmlFor="email" className="form-label">Email address</label>
-                <input type="email" className="form-control" id="email" placeholder="Enter email" required onChange={handleEmailChange} />
+                <input type="email" className="form-control" id="email" placeholder="Enter email" name='email' required onChange={handleEmailChange} />
               </div>
   
               <div className="mb-3">
                 <label htmlFor="password" className="form-label">Password</label>
-                <input type="password" className="form-control" id="password" placeholder="Password" required onChange={handlePasswordChange}/>
+                <input type="password" className="form-control" id="password" placeholder="Password" name='password' required onChange={handlePasswordChange}/>
               </div>
                 <div className='d-flex justify-content-center'>
                 <button type="submit" className="btn btn-dark btn-block text-center mt-5">Sign Up</button>
