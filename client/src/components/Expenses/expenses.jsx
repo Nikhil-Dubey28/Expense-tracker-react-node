@@ -8,25 +8,82 @@ const Expenses = () => {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Food');
+   // New state variable for handling errors
+   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const token = localStorage.getItem('token')
     // fetch expenses on component mount
-    axios.get('http://localhost:3000/api/expense/getexpense')
-      .then(response => setExpenses(response.data))
+    axios.get('http://localhost:3000/api/expense/getexpense',{
+      headers: {
+        Authorization: token
+      }
+    })
+      .then((response) => {
+        setExpenses(response.data)
+        console.log(response.data)
+      })
       .catch(error => console.error(error));
   }, []);
 
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   // add expense on form submission
+  //   axios.post('http://localhost:3000/api/expense/addexpense', { amount, description, category })
+  //     .then(response => setExpenses(expenses => [...expenses, response.data]))
+  //     .catch(error => console.error(error));
+  //   // reset form fields
+  //   setAmount('');
+  //   setDescription('');
+  //   setCategory('Food');
+  // };
   const handleSubmit = (event) => {
     event.preventDefault();
-    // add expense on form submission
-    axios.post('http://localhost:3000/api/expense/addexpense', { amount, description, category })
-      .then(response => setExpenses(expenses => [...expenses, response.data]))
-      .catch(error => console.error(error));
-    // reset form fields
-    setAmount('');
-    setDescription('');
-    setCategory('Food');
+    // Clear any previous errors
+    setError(null);
+
+    const token = localStorage.getItem('token'); // Get the token from local storage
+
+    // add expense on form submission with the token in headers
+    axios.post('http://localhost:3000/api/expense/addexpense', { amount, description, category }, {
+      headers: {
+        Authorization: token, // Pass the token in the Authorization header
+      },
+    })
+      .then(response => {
+        // Update expenses on successful response
+        setExpenses(expenses => [...expenses, response.data]);
+        // Reset form fields
+        setAmount('');
+        setDescription('');
+        setCategory('Food');
+      })
+      .catch(error => {
+        // Handle error and set the error state
+        if (error.response && error.response.data && error.response.data.message) {
+          setError(error.response.data.message);
+        } else {
+          setError('An error occurred while adding the expense.');
+        }
+      });
   };
+
+  const deleteExpense  = async(id) => {
+    try {
+      const token = localStorage.getItem('token')
+    const response =  await axios.delete(`http://localhost:3000/api/expense/${id}`,{
+        headers: {
+          Authorization: token
+        }
+      })
+      if(response.status === 204){
+        setExpenses((prevState) => prevState.filter((expense) => expense.id !== id ) )
+      }
+      
+    }catch (err){
+      console.log(err)
+    }
+  }
 
   return (
     <>
@@ -58,7 +115,7 @@ const Expenses = () => {
             </select>
           </div>
           <div className="col-12">
-            <button type="submit" className="btn btn-dark">Add Expense</button>
+            <button type="submit" className="btn btn-dark mt-3 rounded-5">+ Add Expense</button>
           </div>
         </form>
         {/* display list of expenses */}
@@ -69,13 +126,13 @@ const Expenses = () => {
             <b>Amount:</b>  <span className="badge bg-primary rounded-pill"> {expense.amount}</span>
               <br />
               <br />
-              <span><b>Description:</b> {expense.description}</span>
+              <span className='description-text'><b>Description:</b> {expense.description}</span>
               <br />
               <br />
               <b>Category:</b> <span className="badge bg-primary rounded-pill"> {expense.category}</span>
               <br />
               <br />
-              <button className='btn btn-danger mt-3'>Delete</button>
+              <button className='btn btn-danger mt-3 mb-2 rounded-5' onClick={() => deleteExpense(expense.id)}>Delete</button>
             </li>
           ))}
         </ul>
@@ -85,3 +142,5 @@ const Expenses = () => {
 };
 
 export default Expenses;
+
+

@@ -1,5 +1,7 @@
 const User = require('../model/User')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken');
+const secretKey = 'default_secret_key_that_you_know_about';
 
 
 // register/sign up 
@@ -39,7 +41,10 @@ const login = async (req, res) => {
         } else {
             const correctPass = await bcrypt.compare( password,userDetails.password)
             if (correctPass) {
-                res.status(200).json('user login successful')
+                //generate a jwt token
+                const token = jwt.sign({userId : userDetails.id},secretKey,{ expiresIn: '1h' })
+                req.headers.authorization = token
+                res.status(200).json({ message: 'User login successful', token })
             } else {
                 res.status(401).json('wrong password')
             }

@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../database/configDatabase')
+const Expense = require('./Expense')
 
 
 const User = sequelize.define('user',{
@@ -21,5 +22,8 @@ const User = sequelize.define('user',{
     allowNull: false,
     }
 })
+
+// // Define association with Expense model
+// User.hasMany(Expense, { foreignKey: 'userId' });
 
 module.exports = User

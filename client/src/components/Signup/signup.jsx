@@ -69,7 +69,7 @@ const Signup =() =>{
                 <input type="password" className="form-control" id="password" placeholder="Password" name='password' required onChange={handlePasswordChange}/>
               </div>
                 <div className='d-flex justify-content-center'>
-                <button type="submit" className="btn btn-dark btn-block text-center mt-5 w-50">Sign Up</button>
+                <button type="submit" className="btn btn-dark btn-block text-center mt-5 w-50 rounded-5">Sign Up</button>
                 </div>
               
             </form>

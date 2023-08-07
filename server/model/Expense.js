@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../database/configDatabase')
+const User = require('./User')
 
 
 const Expense = sequelize.define('expense',{
@@ -19,7 +20,11 @@ const Expense = sequelize.define('expense',{
     category: {
         type: Sequelize.STRING,
     allowNull: false,
-    }
+    },
+    
 })
+
+// // Define association with User model
+// Expense.belongsTo(User, { foreignKey: 'userId' });
 
 module.exports = Expense

@@ -34,9 +34,16 @@ const Login =() =>{
         try {
           const response = await axios.post('http://localhost:3000/api/users/login', formData);
           console.log(response.data);
-          if(response.data === 'user login successful'){
+          console.log(response.headers)
+          const token = response.data.token
+          console.log(token)
+          if(response.status===200&&response.data.message === "User login successful"){
+            console.log('login successful')
+            console.log(response.headers)
+            localStorage.setItem('token',token );
             navigate('/expenses')
           }else{
+            console.log('login failed')
             alert('wrong credentials')
           }
         } catch (error) {
@@ -58,16 +65,16 @@ const Login =() =>{
               </div> */}
   
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email address</label>
+                <label htmlFor="email" className="form-label">Email address:</label>
                 <input type="email" className="form-control" id="email" placeholder="Enter email" name='email' required onChange={handleEmailChange} />
               </div>
   
               <div className="mb-3">
-                <label htmlFor="password" className="form-label">Password</label>
+                <label htmlFor="password" className="form-label">Password:</label>
                 <input type="password" className="form-control" id="password" placeholder="Password" name='password' required onChange={handlePasswordChange}/>
               </div>
                 <div className='d-flex justify-content-center'>
-                <button type="submit" className="btn btn-dark btn-block text-center mt-5 w-50">Login</button>
+                <button type="submit" className="btn btn-dark btn-block text-center mt-5 w-50 rounded-5">Login</button>
                 </div>
               
             </form>
