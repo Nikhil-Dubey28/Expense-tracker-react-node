@@ -44,7 +44,14 @@ const login = async (req, res) => {
                 //generate a jwt token
                 const token = jwt.sign({userId : userDetails.id},secretKey,{ expiresIn: '1h' })
                 req.headers.authorization = token
-                res.status(200).json({ message: 'User login successful', token })
+
+                // Include user information in the response
+                const user = {
+                    id: userDetails.id,
+                    email: userDetails.email,
+                    name: userDetails.name // Assuming you have a "name" field in your User model
+                };
+                res.status(200).json({ message: 'User login successful', token, user})
             } else {
                 res.status(401).json('wrong password')
             }

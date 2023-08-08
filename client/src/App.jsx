@@ -4,6 +4,7 @@ import Signup from './components//Signup/signup'
 import Login from './components/Login/login'
 import Expenses from './components/Expenses/expenses'
 import axios from 'axios'
+import PaymentSuccess from './components/PaymentSuccess/paymentSuccess'
 
 
 
@@ -26,6 +27,7 @@ function App() {
     <Router>
       <Routes>
         <Route path= '/' element ={<h1>Home Page!</h1>}/>
+        <Route path= '/paymentsuccess' element ={<PaymentSuccess />}/>
         <Route path= '/expenses' element ={<Expenses />} />
         <Route path='/signup' element = {<Signup />} />
         <Route path='/login' element = {<Login />}  />

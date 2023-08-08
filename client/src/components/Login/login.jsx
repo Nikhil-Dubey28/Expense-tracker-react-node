@@ -32,15 +32,20 @@ const Login =() =>{
         event.preventDefault();
       
         try {
+          
           const response = await axios.post('http://localhost:3000/api/users/login', formData);
-          console.log(response.data);
+          console.log(response);
           console.log(response.headers)
+          
           const token = response.data.token
+          const user = response.data.user
           console.log(token)
           if(response.status===200&&response.data.message === "User login successful"){
+            
             console.log('login successful')
             console.log(response.headers)
             localStorage.setItem('token',token );
+            localStorage.setItem('user',JSON.stringify(user))
             navigate('/expenses')
           }else{
             console.log('login failed')
