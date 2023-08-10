@@ -1,4 +1,5 @@
 const Expense = require('../model/Expense')
+const User = require('../model/User')
 
 
 
@@ -8,6 +9,12 @@ const createExpense = async(req,res) => {
         const {amount,description,category} = req.body  
 
         const newExpense = await Expense.create({amount,description,category, userId: req.userId})
+
+
+        const user = await User.findByPk(req.userId)
+
+        const updateTotalExpense = user.totalexpenses + parseInt(amount)
+        await user.update({totalexpenses: updateTotalExpense})
         res.status(201).json(newExpense)
      }catch(err) {
         console.log(err)

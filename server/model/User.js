@@ -25,6 +25,10 @@ const User = sequelize.define('user',{
         type: Sequelize.BOOLEAN,
         allowNull:false
     },
+    totalexpenses: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+    }
 })
 
 // // Define association with Expense model

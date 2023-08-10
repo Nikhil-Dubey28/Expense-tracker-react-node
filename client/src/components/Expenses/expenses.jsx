@@ -268,7 +268,7 @@ const Expenses = () => {
 
         <ul className="list-group">
             {leaderboard.map(item => (
-                <li key={item.id} className="list-group-item"><b>Name:</b> {item.name}, <b>Expenses</b> {item.total_cost}</li>
+                <li key={item.id} className="list-group-item"><b>Name:</b> {item.name}, <b>Expenses</b> {item.totalexpenses}</li>
             ))}
         </ul>
        </>
