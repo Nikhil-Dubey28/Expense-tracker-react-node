@@ -4,6 +4,10 @@ const router = express.Router()
 const authenticate = require('../middleware/authenticate')
 
 
+
+router.get('/users/getuser',userController.getUser)
+
+
 //signup
 router.post('/users/signup', userController.createUser)
 

@@ -2,25 +2,31 @@ const Razorpay = require('razorpay');
 const config = require('dotenv').config
 const crypto = require('crypto')
 const Order = require('../model/Order')
+const User = require('../model/User')
+const userController = require('./userController')
+const jwt = require('jsonwebtoken');
+const secretKey = 'default_secret_key_that_you_know_about';
 
 config({ path: './config/config.env' })
 
-// Assuming the Razorpay instance is exported from server.js
-const instance = require('../server.js');
 
-// Create a new Razorpay instance using the exported 'instance'
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_API_KEY,
-    key_secret: process.env.RAZORPAY_API_SECRET,
-});
+
+
+
 
 const checkout = async (req, res) => {
-    const options = {
-        amount: 5000,  // amount in the smallest currency unit
-        currency: 'INR',
-    };
+
+    
 
     try {
+        const razorpay = new Razorpay({
+            key_id: process.env.RAZORPAY_API_KEY,
+            key_secret: process.env.RAZORPAY_API_SECRET,
+        });
+        const options = {
+            amount: 5000,  // amount in the smallest currency unit
+            currency: 'INR',
+        };
         const order = await razorpay.orders.create(options);
 
         const newOrder = await Order.create({
@@ -45,63 +51,51 @@ const checkout = async (req, res) => {
 };
 
 
-const paymentVerification = async (req, res) => {
-    console.log(req.body)
-
-
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body
-
-    const body = razorpay_order_id + "|" + razorpay_payment_id
-
-    const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_API_SECRET)
-        .update(body.toString())
-        .digest('hex');
-    console.log('sig received', razorpay_signature);
-    console.log('sig generated', expectedSignature);
-
-
-    const isAuthentic = expectedSignature === razorpay_signature
-
-    if(isAuthentic){
-
-        const order = await Order.findOne({where: {orderid:razorpay_order_id }})
-
-        if(order){
-            await Order.update({status:'SUCCESS',paymentid:razorpay_payment_id,signatureid:razorpay_signature},
-            { where: { orderid: razorpay_order_id } } // Specify the where condition
-            )
-            res.redirect(`http://localhost:5173/paymentsuccess?reference=${razorpay_payment_id}`)
-        }else{
-            res.status(404).json({
-                success: 'false',
-                error: 'order not found',
-
-            })
-        }
-
-    }else{
-        res.status(400).json({
-            success: false,
-            error: 'invalid signature'
-        });
-    }
-
-
-
-
-
    
 
 
-};
 
 const updatePayment = async(req,res) => {
+    try{
+    
+        console.log(req.body)
+    const { order_id, payment_id, signature_id } = req.body
 
+
+    
+    const order = await Order.findOne({where: {orderid:order_id }})
+
+    
+    if(order){
+        await Order.update({status:'SUCCESS',paymentid:payment_id,signatureid:signature_id},
+        { where: { orderid: order_id } } // Specify the where condition
+        )
+        
+        const user = await User.findOne({ where: { id: order.userId } });
+        if (user) {
+            const userId = req.userId
+            await user.update({ ispremiumuser: true });
+            // const newToken = jwt.sign({ user: user }, secretKey, { expiresIn: '1h' });
+            // res.status(200).json({newToken: newToken,user})
+            res.status(200).json({
+                success:'true',
+                message: 'payment successful',
+               token: userController.generateAccessToken(userId, user.name,true)
+            })
+        }
+    }
+    }
+   
+catch(err) {
+    console.log(err)
+    res.status(500).json({message:'internal server error'})
+}
 }
 
 
 
 module.exports = {
     checkout,
-    paymentVerification
+    // paymentVerification,
+    updatePayment
 };

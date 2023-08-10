@@ -8,6 +8,8 @@ const userRoutes = require('./routes/userRoutes')
 const expenseRoutes = require('./routes/expenseRoutes')
 const paymentRoutes = require('./routes/paymentRoutes.js')
 const sequelize = require('./database/configDatabase')
+
+const premiumRoutes = require('./routes/premiumRoutes')
 const config = require('dotenv').config
 const Razorpay = require('razorpay')
 
@@ -33,6 +35,7 @@ app.get('/api/getkey',(req,res) => res.status(200).json({key: process.env.RAZORP
 app.use('/api', userRoutes )
 app.use('/api', paymentRoutes)
 app.use('/api', expenseRoutes)
+app.use('/api', premiumRoutes)
 
 
 User.hasMany(Expense, { foreignKey: 'userId' });

@@ -81,7 +81,10 @@ const Login =() =>{
                 <div className='d-flex justify-content-center'>
                 <button type="submit" className="btn btn-dark btn-block text-center mt-5 w-50 rounded-5">Login</button>
                 </div>
-              
+              <div className='text-center mt-5'>
+              <p>Don't have an account?</p>
+            <button className='btn btn-light rounded-5' onClick={() => navigate('/signup')}>Create a new account</button>
+            </div>
             </form>
           </div>
         </div>

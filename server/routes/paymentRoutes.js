@@ -5,10 +5,11 @@ const router = express.Router()
 const authenticate = require('../middleware/authenticate')
 
 
-// router.use(authenticate)
-router.post('/checkout', authenticate,paymentController.checkout)
 
-router.post('/paymentverification', paymentController.paymentVerification)
+router.post('/checkout', authenticate, paymentController.checkout)
+
+// router.post('/paymentverification', paymentController.paymentVerification)
+router.post('/updatetransactionstatus',authenticate, paymentController.updatePayment)
 
 
 
