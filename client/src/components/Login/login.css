@@ -5,3 +5,7 @@
 .login-text {
     font-size: 2.5rem;
 }
+
+.login-button {
+  background-color: rgb(73, 17, 73) !important;
+}
