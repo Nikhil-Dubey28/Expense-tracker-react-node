@@ -210,7 +210,7 @@ const Expenses = () => {
 
   return (
     <>
-      <nav className="navbar bg-light justify-content-center">
+      <nav className="navbar justify-content-center">
 
         {/* <div className="container-fluid d-flex justify-content-center align-items-center"> */}
         <div className='d-flex justify-content-center align-items-center text-center'>
@@ -279,7 +279,7 @@ const Expenses = () => {
 
 
       <br />
-      <div className="container bg-light p-4 rounded">
+      <div className="container p-4 rounded div-main">
         <form className="row g-3" onSubmit={handleSubmit}>
           <div className="col-sm">
             <label htmlFor="expenseAmount" className="form-label">Expense Amount</label>
@@ -308,7 +308,7 @@ const Expenses = () => {
         <ul className="list-group mt-4">
           {expenses.map(expense => (
             // <li key={expense.id} className="list-group-item d-flex justify-content-between align-items-center">
-            <li key={expense.id} className="list-group-item">
+            <li key={expense.id} className="list-group-item li-main">
               <b className='fs-6 mt-3'>Amount:</b>  <span className="fs-6 badge bg-primary rounded-pill mt-3 fw-normal"> {expense.amount}</span>
               <br />
               <br />

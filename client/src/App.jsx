@@ -5,6 +5,7 @@ import Login from './components/Login/login'
 import Expenses from './components/Expenses/expenses'
 import axios from 'axios'
 import PaymentSuccess from './components/PaymentSuccess/paymentSuccess'
+import ForgotPassword from './components/ForgotPassword/forgotPassword'
 
 
 const ProtectedRoute = ({ element, ...rest }) => {
@@ -39,6 +40,7 @@ function App() {
         <Route path="/expenses" element={<ProtectedRoute element={<Expenses />} />} />
         <Route path='/signup' element = {<Signup />} />
         <Route path='/login' element = {<Login />}  />
+        <Route path='/forgotpassword' element = {<ForgotPassword/>}  />
       </Routes>
     </Router>
   )

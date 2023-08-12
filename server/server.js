@@ -4,10 +4,13 @@ const cors = require('cors')
 const User = require('./model/User')
 const Expense = require ('./model/Expense')
 const Order = require('./model/Order')
+const Forgotpassword = require('./model/Forgotpassword')
 const userRoutes = require('./routes/userRoutes')
 const expenseRoutes = require('./routes/expenseRoutes')
 const paymentRoutes = require('./routes/paymentRoutes.js')
+const resetpasswordRoutes = require('./routes/resetpasswordRoutes')
 const sequelize = require('./database/configDatabase')
+const Sib = require('sib-api-v3-sdk')
 
 const premiumRoutes = require('./routes/premiumRoutes')
 const config = require('dotenv').config
@@ -25,12 +28,14 @@ config({path:'./config/config.env'})
 const app = express()
 
 
+
 // middlewares
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // route 
+app.use('/api',resetpasswordRoutes)
 app.get('/api/getkey',(req,res) => res.status(200).json({key: process.env.RAZORPAY_API_KEY}))
 app.use('/api', userRoutes )
 app.use('/api', paymentRoutes)
@@ -44,7 +49,8 @@ Expense.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(Order , { foreignKey: 'userId' })
 Order.belongsTo(User, { foreignKey: 'userId' })
 
-
+User.hasMany(Forgotpassword);
+Forgotpassword.belongsTo(User);
 
 
 sequelize

@@ -6,7 +6,7 @@ import './login.css'
 
 const Login =() =>{
   const navigate = useNavigate()
-
+  const [login, setLogin] = useState(true)
     const [formData, setFormData] = useState({
       email: '',
       password: ''
@@ -58,11 +58,11 @@ const Login =() =>{
       
 
     return(
-        <div className="container d-flex align-items-center justify-content-center vh-100">
+        <div className="container d-flex align-items-center justify-content-center vh-100 div-container">
         <div className="row justify-content-center align-items-center">
           {/* <div className="col-md-12 col-lg-12"> */}
           <div className='form-container'>
-            <form className="p-5 bg-light" onSubmit={handleFormSubmit}>
+            <form className="p-5 formContainer" onSubmit={handleFormSubmit}>
               <h2 className="text-center mb-5 login-text">Login</h2>
               {/* <div className="mb-3">
                 <label htmlFor="name" className="form-label">Name</label>
@@ -70,7 +70,7 @@ const Login =() =>{
               </div> */}
   
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email address:</label>
+                <label htmlFor="email" className="form-label">Email:</label>
                 <input type="email" className="form-control" id="email" placeholder="Enter email" name='email' required onChange={handleEmailChange} />
               </div>
   
@@ -86,6 +86,10 @@ const Login =() =>{
             <button className='btn btn-light rounded-5' onClick={() => navigate('/signup')}>Create a new account</button>
             </div>
             </form>
+            <div className='text-center mt-1'>
+              <p>Forgot password?</p>
+            <button className='btn btn-light rounded-5 w-75' onClick={() => navigate('/forgotpassword')}>Click here</button>
+            </div>
           </div>
         </div>
       </div>
