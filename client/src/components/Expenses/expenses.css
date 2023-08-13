@@ -8,6 +8,19 @@
     color: black;
 }
 
+.div-amount{
+    background-color: rgb(175, 235, 175);
+}
+
+.div-category {
+    background-color: rgb(196, 228, 241);
+}
+
+.div-desc{
+    background-color: lightyellow;
+}
+
+
 /* .div-main {
     background: linear-gradient(to bottom, #f54141, #802e95);
 } */

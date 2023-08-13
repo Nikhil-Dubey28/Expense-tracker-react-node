@@ -210,10 +210,10 @@ const Expenses = () => {
 
   return (
     <>
-      <nav className="navbar justify-content-center">
+      <nav className="navbar justify-content-center bg-light main-nav">
 
         {/* <div className="container-fluid d-flex justify-content-center align-items-center"> */}
-        <div className='d-flex justify-content-center align-items-center text-center'>
+        <div className='d-flex justify-content-center align-items-center text-center mt-2'>
           <span className="navbar-brand mb-0 expenses-title text-center"><h1 className="fw-light" style={{}}><span style={{ color: "teal" }}>E</span>xpense <span style={{ color: "teal" }}>T</span>racker</h1></span>
 
         </div>
@@ -221,7 +221,7 @@ const Expenses = () => {
 
           <button className='btn btn-dark text-warning rounded-5 mx-2 px-3 py-2' onClick={() => handleBuy(50)}>Buy Premium <FontAwesomeIcon icon={faCrown} /></button>
         )}
-        <button className='btn btn-dark text-danger rounded-5 mx-2 px-3 py-2' onClick={() => handleLogout()}>Logout</button>
+        <button className='btn btn-dark text-danger rounded-5 mx-2 mt-2 px-3 py-2' onClick={() => handleLogout()}>Logout</button>
       </nav>
 
 
@@ -239,7 +239,7 @@ const Expenses = () => {
       </div>
 
 
-      {isPremium && (<div className='container-fluid d-flex justify-content-center align-items-center mt-2'>
+      {isPremium && (<><div className='container-fluid d-flex justify-content-center align-items-center mt-2'>
         <button className='btn btn-dark rounded-5 text-warning' onClick={() => {
           setLeader(prev => !prev)
           handleLeader()
@@ -247,8 +247,12 @@ const Expenses = () => {
           {leader ? 'HIDE LEADERBOARD' : 'SHOW LEADERBOARD'}
           
           </button>
-
-      </div>)}
+          
+      </div>
+      
+     
+      </>
+      )}
       <br />
       {/* {leader && (
         <div className='contianer-fluid d-flex justify-content-center align-items-center'>
@@ -281,17 +285,17 @@ const Expenses = () => {
       <br />
       <div className="container p-4 rounded div-main">
         <form className="row g-3" onSubmit={handleSubmit}>
-          <div className="col-sm">
-            <label htmlFor="expenseAmount" className="form-label">Expense Amount</label>
-            <input type="number" className="form-control" id="expenseAmount" name='amount' value={amount} onChange={event => setAmount(event.target.value)} />
+          <div className="col-sm mx-2 rounded-2 px-3 py-2 div-amount">
+            <label htmlFor="expenseAmount" className="form-label"></label>
+            <input type="number" placeholder='Enter Amount' className="form-control mb-3" id="expenseAmount" name='amount' value={amount} onChange={event => setAmount(event.target.value)} />
           </div>
-          <div className="col-sm">
-            <label htmlFor="description" className="form-label">Description</label>
-            <input type="text" className="form-control" id="description" name='description' value={description} onChange={event => setDescription(event.target.value)} />
+          <div className="col-sm mx-2 rounded-2 px-3 py-2 div-desc">
+            <label htmlFor="description" className="form-label"></label>
+            <input type="text" placeholder='Write a Description' className="form-control mb-3" id="description" name='description' value={description} onChange={event => setDescription(event.target.value)} />
           </div>
-          <div className="col-sm">
-            <label htmlFor="category" className="form-label">Category</label>
-            <select className="form-select" id="category" name='category' value={category} onChange={event => setCategory(event.target.value)}>
+          <div className="col-sm mx-2 rounded-2 px-3 py-2 div-category">
+            <label htmlFor="category" className="form-label"></label>
+            <select className="form-select mb-3" id="category" name='category' value={category} onChange={event => setCategory(event.target.value)}>
               <option>Food</option>
               <option>Fuel</option>
               <option>Electronics</option>
@@ -323,6 +327,9 @@ const Expenses = () => {
           ))}
         </ul>
       </div>
+      {isPremium && (
+        <div className='container-fluid d-flex justify-content-center align-items-center mt-4'> <button className='btn btn-success rounded-5 mb-5' onClick={() => navigate('/report')}>Generate Report</button></div>
+      )}
     </>
   );
 };
