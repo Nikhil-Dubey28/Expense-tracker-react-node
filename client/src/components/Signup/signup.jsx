@@ -52,7 +52,7 @@ const Signup =() =>{
         <div className="row justify-content-center align-items-center">
           {/* <div className="col-md-12 col-lg-12"> */}
           <div className='form-container'>
-            <form className="p-5 bg-light" onSubmit={handleFormSubmit}>
+            <form className="p-5" onSubmit={handleFormSubmit}>
               <h2 className="text-center mb-5 register-text">Register</h2>
               <div className="mb-3">
                 <label htmlFor="name" className="form-label">Name</label>

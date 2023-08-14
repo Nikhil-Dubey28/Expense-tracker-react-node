@@ -11,6 +11,9 @@ router.post('/expense/addexpense', authenticate,expenseController.createExpense)
 //get expense
 router.get('/expense/getexpense',authenticate, expenseController.getExpense)
 
+//paginated expenses
+router.get('/expense/paginated',authenticate,expenseController.paginatedExpense)
+
 //delete expense
 router.delete('/expense/:id',authenticate,expenseController.deleteExpense)
 

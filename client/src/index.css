@@ -68,3 +68,11 @@ button:focus-visible {
   }
 } */
 
+* :root {
+  font-family: 'Josefin Sans', sans-serif !important;
+
+}
+body {
+  font-family: 'Josefin Sans', sans-serif !important;
+
+}

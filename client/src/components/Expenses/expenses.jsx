@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Login from '../Login/login';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ReactPaginate from 'react-paginate'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
+import { faFire } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import './expenses.css';
 import { useNavigate } from 'react-router-dom';
 
 const Expenses = () => {
   const [expenses, setExpenses] = useState([]);
+  const [pageCount, setPageCount]= useState(1)
+  const currentPage = useRef()
+  const [limit,setLimit] = useState(5)
   const [leaderboard, setLeaderboard] = useState([])
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
@@ -21,9 +26,10 @@ const Expenses = () => {
 
   const navigate = useNavigate()
 
-
+const user = JSON.parse(localStorage.getItem('user'))
 
   useEffect(() => {
+    currentPage.current = 1
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -46,7 +52,8 @@ const Expenses = () => {
       }
     };
 
-    fetchData();
+    // fetchData();
+    getPaginatedExpenses()
   }, [localStorage.getItem('user')]);
 
 
@@ -66,9 +73,11 @@ const Expenses = () => {
       },
     })
       .then(response => {
-       
-
+      
+        // const updatedExpenses = [...expenses]
+        // updatedExpenses.unshift(response.data)
         setExpenses(expenses => [...expenses, response.data]);
+        // setExpenses(updatedExpenses)
         // Reset form fields
         setAmount('');
         setDescription('');
@@ -208,21 +217,50 @@ const Expenses = () => {
     }
   }
 
+  const handlePageClick = async(e) => {
+    console.log(e)
+   currentPage.current = e.selected+1
+    getPaginatedExpenses()
+  }
+
+  const getPaginatedExpenses= async() => {
+    try {
+      
+
+      const token = localStorage.getItem('token');
+
+      // Fetch expenses data
+      const expensesResponse = await axios.get(`http://localhost:3000/api/expense/paginated?page=${currentPage.current}&limit=${limit}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setPageCount(expensesResponse.data.pageCount);
+      setExpenses(expensesResponse.data.result)
+      console.log(expensesResponse.data)
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <>
-      <nav className="navbar justify-content-center bg-light main-nav">
+      <nav className="navbar justify-content-center main-nav">
 
         {/* <div className="container-fluid d-flex justify-content-center align-items-center"> */}
         <div className='d-flex justify-content-center align-items-center text-center mt-2'>
-          <span className="navbar-brand mb-0 expenses-title text-center"><h1 className="fw-light" style={{}}><span style={{ color: "teal" }}>E</span>xpense <span style={{ color: "teal" }}>T</span>racker</h1></span>
+          <span className="navbar-brand mb-0  text-center"><h1 className="fw-light expense-title mx-3" style={{}}><span style={{ color: "teal" }}>E</span>xpense <span style={{ color: "teal" }}>T</span>racker</h1></span>
 
         </div>
-        {showBuy && (
-
-          <button className='btn btn-dark text-warning rounded-5 mx-2 px-3 py-2' onClick={() => handleBuy(50)}>Buy Premium <FontAwesomeIcon icon={faCrown} /></button>
-        )}
-        <button className='btn btn-dark text-danger rounded-5 mx-2 mt-2 px-3 py-2' onClick={() => handleLogout()}>Logout</button>
+       
+      <button className='btn btn-outline-dark text-danger rounded-5 mx-2 py-2 px-5' onClick={() => handleLogout()}>Logout</button>
       </nav>
+      <h3 className='mt-5 text-center fw-light'>Welcome {user.name}!</h3>
+        {/* {showBuy && (
+
+          <button className='btn btn-outline-dark text-warning rounded-5 mx-2 py-2 px-5 mt-3' onClick={() => handleBuy(50)}>Buy Premium <FontAwesomeIcon icon={faCrown} /></button>
+        )} */}
+        
 
 
 
@@ -232,7 +270,7 @@ const Expenses = () => {
 
         {isPremium && (
 
-          <p>YOU ARE A PREMIUM USER!</p>
+          <p className='mt-5'>YOU ARE A PREMIUM USER! <FontAwesomeIcon icon={faCrown} /></p>
 
 
         )}
@@ -240,7 +278,7 @@ const Expenses = () => {
 
 
       {isPremium && (<><div className='container-fluid d-flex justify-content-center align-items-center mt-2'>
-        <button className='btn btn-dark rounded-5 text-warning' onClick={() => {
+        <button className='btn btn-outline-dark rounded-5 text-warning pt-2 px-5' onClick={() => {
           setLeader(prev => !prev)
           handleLeader()
           }}>
@@ -285,13 +323,14 @@ const Expenses = () => {
       <br />
       <div className="container p-4 rounded div-main">
         <form className="row g-3" onSubmit={handleSubmit}>
+       
           <div className="col-sm mx-2 rounded-2 px-3 py-2 div-amount">
             <label htmlFor="expenseAmount" className="form-label"></label>
-            <input type="number" placeholder='Enter Amount' className="form-control mb-3" id="expenseAmount" name='amount' value={amount} onChange={event => setAmount(event.target.value)} />
+            <input type="number" placeholder='Enter Amount' className="form-control mb-3 input-expense" id="expenseAmount" name='amount' value={amount} onChange={event => setAmount(event.target.value)} required />
           </div>
           <div className="col-sm mx-2 rounded-2 px-3 py-2 div-desc">
             <label htmlFor="description" className="form-label"></label>
-            <input type="text" placeholder='Write a Description' className="form-control mb-3" id="description" name='description' value={description} onChange={event => setDescription(event.target.value)} />
+            <input type="text" placeholder='Write a Description' className="form-control mb-3 input-desc" id="description" name='description' value={description} onChange={event => setDescription(event.target.value)} required/>
           </div>
           <div className="col-sm mx-2 rounded-2 px-3 py-2 div-category">
             <label htmlFor="category" className="form-label"></label>
@@ -304,14 +343,18 @@ const Expenses = () => {
               <option>Others</option>
             </select>
           </div>
-          <div className="col-12">
-            <button type="submit" className="btn btn-dark mt-3 rounded-5">+ Add Expense</button>
+          <div className='d-flex justify-content-center'>
+          {/* <div className="col-12"> */}
+            <button type="submit" className="btn btn-dark mt-3 rounded-5 py-3 px-5">+ Add Expense</button>
           </div>
+          {/* </div> */}
         </form>
         {/* display list of expenses */}
-        <ul className="list-group mt-4">
-          {expenses.map(expense => (
+        {/* <ul className="list-group mt-4">
+          
+          {expenses.length?expenses.map(expense => (
             // <li key={expense.id} className="list-group-item d-flex justify-content-between align-items-center">
+            
             <li key={expense.id} className="list-group-item li-main">
               <b className='fs-6 mt-3'>Amount:</b>  <span className="fs-6 badge bg-primary rounded-pill mt-3 fw-normal"> {expense.amount}</span>
               <br />
@@ -324,12 +367,72 @@ const Expenses = () => {
               <br />
               <button className='btn btn-danger mt-3 mb-2 rounded-5' onClick={() => deleteExpense(expense.id)}>Delete</button>
             </li>
-          ))}
-        </ul>
+          )) : <h2 className='fw-light text-center mt-5'>No Expenses Added</h2> }
+        </ul> */}
+         <div className="container mt-4 p-3 " id="table">
+    <table id="example" className="table table-hover" style={{ width: '100%' }}>
+      <thead id="tableHead">
+        <tr>
+          <th scope="col" className="rounded-start">Date</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Description</th>
+          <th scope="col">Category</th>
+          <th scope="col" className="rounded-end"></th>
+        </tr>
+      </thead>
+      {/* <br /> */}
+      
+      <tbody id="tbodyId">
+      {expenses.map(expense => (
+    <tr key={expense.id}>
+      <td>{expense.createdAt.slice(0,-14)}</td>
+      <td>{expense.amount}</td>
+      <td>{expense.description}</td>
+      <td>{expense.category}</td>
+      <td>
+        <button className="editDelete btn btn-secondary mx-2">Edit</button>
+        <button className='btn btn-danger mx-2 rounded-5' onClick={() => deleteExpense(expense.id)}>Delete</button>
+      </td>
+    </tr>
+  ))}
+      </tbody>
+    </table>
+    
+    {!expenses.length && (
+      <h2 className='fw-light text-center mt-5'>No expenses added</h2>
+    )}
+</div>
+<br />
+<br />
+<br />
+ <ReactPaginate
+        breakLabel="..."
+        nextLabel="next >"
+        onPageChange={handlePageClick}
+        pageRangeDisplayed={5}
+        pageCount={pageCount}
+        previousLabel="< previous"
+        renderOnZeroPageCount={null}
+        marginPagesDisplayed={2}
+           
+            containerClassName="pagination justify-content-center"
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            previousClassName="page-item"
+            previousLinkClassName="page-link"
+            nextClassName="page-item"
+            nextLinkClassName="page-link"
+            activeClassName="active"
+      />
+
       </div>
       {isPremium && (
         <div className='container-fluid d-flex justify-content-center align-items-center mt-4'> <button className='btn btn-success rounded-5 mb-5' onClick={() => navigate('/report')}>Generate Report</button></div>
       )}
+      {showBuy && (
+<div className='container-fluid d-flex justify-content-center align-items-center mb-4'><button className='btn btn-outline-dark text-warning rounded-5 mx-2 py-2 px-5 mt-3' onClick={() => handleBuy(50)}>Buy Premium <FontAwesomeIcon icon={faCrown} /></button></div>
+
+)}
     </>
   );
 };

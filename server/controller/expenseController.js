@@ -31,7 +31,69 @@ const createExpense = async(req,res) => {
 const getExpense = async(req,res) => {
     try {
         const expenses = await Expense.findAll({where: {userId: req.userId}})
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+        const startIndex = (page-1)*limit
+        const lastIndex = (page)*limit
+
+        const results ={}
+        results.totalExpenses = expenses.length;
+
+        results.pageCount =Math.ceil(expenses.length/limit)
+
+        if(lastIndex<expenses.length){
+            results.next= {
+                page:page + 1,
+                
+            }
+        }
+        if(startIndex > 0){
+
+            results.prev={
+                page: page -1,
+            }
+        }
+
+        results.result = expenses.slice(startIndex,lastIndex)
+
+
         res.status(200).json(expenses)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: 'internal server error'})
+    }
+}
+
+const paginatedExpense = async(req,res) => {
+    try {
+        const expenses = await Expense.findAll({where: {userId: req.userId}})
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+        const startIndex = (page-1)*limit
+        const lastIndex = (page)*limit
+
+        const results ={}
+        results.totalExpenses = expenses.length;
+
+        results.pageCount =Math.ceil(expenses.length/limit)
+
+        if(lastIndex<expenses.length){
+            results.next= {
+                page:page + 1,
+                
+            }
+        }
+        if(startIndex > 0){
+
+            results.prev={
+                page: page -1,
+            }
+        }
+
+        results.result = expenses.slice(startIndex,lastIndex)
+
+
+        res.status(200).json(results)
     } catch (err) {
         console.log(err)
         res.status(500).json({message: 'internal server error'})
@@ -65,7 +127,8 @@ const deleteExpense = async(req,res) => {
 module.exports = {
     createExpense,
     getExpense,
-    deleteExpense
+    deleteExpense,
+    paginatedExpense
 }
 
 
