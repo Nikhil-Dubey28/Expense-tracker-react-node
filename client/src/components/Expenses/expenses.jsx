@@ -223,7 +223,7 @@ const user = JSON.parse(localStorage.getItem('user'))
     getPaginatedExpenses()
   }
 
-  const getPaginatedExpenses= async() => {
+  const getPaginatedExpenses = async () => {
     try {
       
 
@@ -241,6 +241,10 @@ const user = JSON.parse(localStorage.getItem('user'))
     } catch (error) {
       console.error(error);
     }
+  }
+
+  const changeLimit = () => {
+    getPaginatedExpenses()
   }
 
   return (
@@ -390,7 +394,7 @@ const user = JSON.parse(localStorage.getItem('user'))
       <td>{expense.description}</td>
       <td>{expense.category}</td>
       <td>
-        <button className="editDelete btn btn-secondary mx-2">Edit</button>
+        <button className="editDelete btn btn-secondary rounded-5 mx-2">Edit</button>
         <button className='btn btn-danger mx-2 rounded-5' onClick={() => deleteExpense(expense.id)}>Delete</button>
       </td>
     </tr>
@@ -424,8 +428,10 @@ const user = JSON.parse(localStorage.getItem('user'))
             nextLinkClassName="page-link"
             activeClassName="active"
       />
-
+      <input type ='text' onChange={e => setLimit(e.target.value)}/>
+        <button className='btn btn-outline-dark rounded-2 mx-2' onClick={changeLimit}>Set Limit per page</button>
       </div>
+
       {isPremium && (
         <div className='container-fluid d-flex justify-content-center align-items-center mt-4'> <button className='btn btn-success rounded-5 mb-5' onClick={() => navigate('/report')}>Generate Report</button></div>
       )}
