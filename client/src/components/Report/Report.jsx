@@ -12,7 +12,7 @@ const Report = () => {
                     <th scope='col'>DATE</th>
                     <th scope='col'>DESCRIPTION</th>
                     <th scope='col'>CATEGORY</th>
-                    <th scope='col'>INCOME</th>
+                    {/* <th scope='col'>INCOME</th> */}
                     <th scope='col'>EXPENSES</th>
                 </tr>
             </thead>
@@ -28,7 +28,7 @@ const Report = () => {
                     <th scope='col'>DATE</th>
                     <th scope='col'>DESCRIPTION</th>
                     <th scope='col'>CATEGORY</th>
-                    <th scope='col'>INCOME</th>
+                    {/* <th scope='col'>INCOME</th> */}
                     <th scope='col'>EXPENSES</th>
                 </tr>
             </thead>

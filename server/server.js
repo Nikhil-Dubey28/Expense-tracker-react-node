@@ -11,6 +11,10 @@ const paymentRoutes = require('./routes/paymentRoutes.js')
 const resetpasswordRoutes = require('./routes/resetpasswordRoutes')
 const sequelize = require('./database/configDatabase')
 const Sib = require('sib-api-v3-sdk')
+const helmet = require('helmet')
+const path = require('path')
+const fs = require('fs')
+const morgan = require('morgan')
 
 const premiumRoutes = require('./routes/premiumRoutes')
 const config = require('dotenv').config
@@ -28,11 +32,14 @@ config({path:'./config/config.env'})
 const app = express()
 
 
+const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'})
 
 // middlewares
+app.use(helmet())
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('combined' {stream: accessLogStream}),)
 
 // route 
 app.use('/api',resetpasswordRoutes)

@@ -211,11 +211,15 @@ const user = JSON.parse(localStorage.getItem('user'))
         }
       })
       setLeaderboard(response.data)
+
+      
       console.log(response)
     }catch(err) {
       console.log(err)
     }
   }
+
+
 
   const handlePageClick = async(e) => {
     console.log(e)
@@ -229,15 +233,20 @@ const user = JSON.parse(localStorage.getItem('user'))
 
       const token = localStorage.getItem('token');
 
+      const userString = localStorage.getItem('user');
+      const user = JSON.parse(userString);
+      setIsPremium(user.ispremiumuser);
+      setShowBuy(!user.ispremiumuser);
+
       // Fetch expenses data
-      const expensesResponse = await axios.get(`http://localhost:3000/api/expense/paginated?page=${currentPage.current}&limit=${limit}`, {
+      const response = await axios.get(`http://localhost:3000/api/expense/paginated?page=${currentPage.current}&limit=${limit}`, {
         headers: {
           Authorization: token,
         },
       });
-      setPageCount(expensesResponse.data.pageCount);
-      setExpenses(expensesResponse.data.result)
-      console.log(expensesResponse.data)
+      setPageCount(response.data.pageCount);
+      setExpenses(response.data.result)
+      console.log(response.data)
     } catch (error) {
       console.error(error);
     }
@@ -249,9 +258,9 @@ const user = JSON.parse(localStorage.getItem('user'))
 
   return (
     <>
+        {/* <div className="container-fluid d-flex justify-content-center align-items-center"> */}
       <nav className="navbar justify-content-center main-nav">
 
-        {/* <div className="container-fluid d-flex justify-content-center align-items-center"> */}
         <div className='d-flex justify-content-center align-items-center text-center mt-2'>
           <span className="navbar-brand mb-0  text-center"><h1 className="fw-light expense-title mx-3" style={{}}><span style={{ color: "teal" }}>E</span>xpense <span style={{ color: "teal" }}>T</span>racker</h1></span>
 
@@ -259,6 +268,8 @@ const user = JSON.parse(localStorage.getItem('user'))
        
       <button className='btn btn-outline-dark text-danger rounded-5 mx-2 py-2 px-5' onClick={() => handleLogout()}>Logout</button>
       </nav>
+    
+
       <h3 className='mt-5 text-center fw-light'>Welcome {user.name}!</h3>
         {/* {showBuy && (
 
@@ -389,10 +400,10 @@ const user = JSON.parse(localStorage.getItem('user'))
       <tbody id="tbodyId">
       {expenses.map(expense => (
     <tr key={expense.id}>
-      <td>{expense.createdAt.slice(0,-14)}</td>
-      <td>{expense.amount}</td>
-      <td>{expense.description}</td>
-      <td>{expense.category}</td>
+      <td><h5 className='fw-light mt-2'>{expense.createdAt.slice(0,-14)}</h5></td>
+      <td> <h5 className='fw-light mt-2'>{expense.amount}</h5></td>
+      <td> <h5 className='fw-light mt-2'>{expense.description}</h5></td>
+      <td> <h5 className='fw-light mt-2'>{expense.category}</h5></td>
       <td>
         <button className="editDelete btn btn-secondary rounded-5 mx-2">Edit</button>
         <button className='btn btn-danger mx-2 rounded-5' onClick={() => deleteExpense(expense.id)}>Delete</button>
@@ -416,7 +427,7 @@ const user = JSON.parse(localStorage.getItem('user'))
         pageRangeDisplayed={5}
         pageCount={pageCount}
         previousLabel="< previous"
-        renderOnZeroPageCount={null}
+        // renderOnZeroPageCount={}
         marginPagesDisplayed={2}
            
             containerClassName="pagination justify-content-center"
