@@ -1,0 +1,10 @@
+.expense-title {
+    font-size: 2.5rem;
+    cursor: pointer;
+}
+
+.main-nav {
+    /* background-color: rgb(234, 255, 234); */
+    background-color: rgb(255, 253, 234) !important;
+    
+}

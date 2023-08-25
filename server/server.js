@@ -1,6 +1,10 @@
 const express = require('express')
+const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const config = require('dotenv').config
+
+config({path:'./config/config.env'})
 const User = require('./model/User')
 const Expense = require ('./model/Expense')
 const Order = require('./model/Order')
@@ -17,10 +21,7 @@ const fs = require('fs')
 const morgan = require('morgan')
 
 const premiumRoutes = require('./routes/premiumRoutes')
-const config = require('dotenv').config
 const Razorpay = require('razorpay')
-
-config({path:'./config/config.env'})
 
  const instance = new Razorpay({
     key_id: process.env.RAZORPAY_API_KEY,
@@ -29,7 +30,6 @@ config({path:'./config/config.env'})
   module.exports  = instance
 
 
-const app = express()
 
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'})
@@ -39,7 +39,7 @@ app.use(helmet())
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(morgan('combined' {stream: accessLogStream}),)
+app.use(morgan('combined', {stream: accessLogStream}))
 
 // route 
 app.use('/api',resetpasswordRoutes)
@@ -58,6 +58,10 @@ Order.belongsTo(User, { foreignKey: 'userId' })
 
 User.hasMany(Forgotpassword);
 Forgotpassword.belongsTo(User);
+
+
+
+
 
 
 sequelize

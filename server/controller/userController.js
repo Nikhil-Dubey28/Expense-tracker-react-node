@@ -1,7 +1,7 @@
 const User = require('../model/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
-const secretKey = 'default_secret_key_that_you_know_about';
+const secretKey = process.env.TOKEN_SECRET_KEY
 
 
 // register/sign up 
@@ -37,7 +37,8 @@ const login = async (req, res) => {
         const userDetails = await User.findOne({ where: { email } })
 
         if (!userDetails) {
-            res.status(404).json('wrong email')
+            res.status(404).json({message: 'wrong email'})
+           
         } else {
             const correctPass = await bcrypt.compare( password,userDetails.password)
             if (correctPass) {
@@ -49,12 +50,12 @@ const login = async (req, res) => {
                 const user = {
                     id: userDetails.id,
                     email: userDetails.email,
-                    name: userDetails.name, // Assuming you have a "name" field in your User model
+                    name: userDetails.name, 
                     ispremiumuser: userDetails.ispremiumuser
                 };
                 res.status(200).json({ message: 'User login successful', token, user})
             } else {
-                res.status(401).json('wrong password')
+                res.status(401).json({message: 'wrong password'})
             }
         }
     } catch (err) {

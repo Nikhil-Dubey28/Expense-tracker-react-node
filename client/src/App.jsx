@@ -7,6 +7,8 @@ import axios from 'axios'
 import PaymentSuccess from './components/PaymentSuccess/paymentSuccess'
 import ForgotPassword from './components/ForgotPassword/forgotPassword'
 import Report from './components/Report/Report'
+import Leaderboard from './components/Leaderboard/Leaderboard'
+import Edit from './components/Edit/Edit'
 
 
 const ProtectedRoute = ({ element, ...rest }) => {
@@ -19,18 +21,18 @@ const ProtectedRoute = ({ element, ...rest }) => {
 };
 
 function App() {
-  axios.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = token;
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
+  // axios.interceptors.request.use(
+  //   (config) => {
+  //     const token = localStorage.getItem('token');
+  //     if (token) {
+  //       config.headers.Authorization = token;
+  //     }
+  //     return config;
+  //   },
+  //   (error) => {
+  //     return Promise.reject(error);
+  //   }
+  // );
 
   return (
     <Router>
@@ -42,7 +44,9 @@ function App() {
         <Route path='/signup' element = {<Signup />} />
         <Route path='/login' element = {<Login />}  />
         <Route path='/forgotpassword' element = {<ForgotPassword/>}  />
-        <Route path='/report' element = {<Report/>}  />
+        <Route path='/report' element = {<ProtectedRoute element = {<Report/>} />}  />
+        <Route path='/leaderboard' element = {<ProtectedRoute element = {<Leaderboard />}/>}  />
+        <Route path='/edit/:id' element = {<ProtectedRoute element = {<Edit />}/>}  />
       </Routes>
     </Router>
   )

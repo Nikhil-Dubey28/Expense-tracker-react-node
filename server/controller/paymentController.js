@@ -5,7 +5,7 @@ const Order = require('../model/Order')
 const User = require('../model/User')
 const userController = require('./userController')
 const jwt = require('jsonwebtoken');
-const secretKey = 'default_secret_key_that_you_know_about';
+const secretKey = process.env.TOKEN_SECRET_KEY
 
 config({ path: './config/config.env' })
 

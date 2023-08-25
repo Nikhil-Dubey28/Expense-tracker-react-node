@@ -8,9 +8,14 @@ import { faFire } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import './expenses.css';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../Navbar/Navbar';
+
 
 const Expenses = () => {
+  const [showEdit, setShowEdit] = useState(true)
+  const [showSave,setShowSave] = useState(false)
   const [expenses, setExpenses] = useState([]);
+  const [editState , setEditState] = useState(expenses.map(() => false))
   const [pageCount, setPageCount]= useState(1)
   const currentPage = useRef()
   const [limit,setLimit] = useState(5)
@@ -23,6 +28,7 @@ const Expenses = () => {
   const [isPremium, setIsPremium] = useState(false)
   const [showBuy, setShowBuy] = useState(true)
   const [leader, setLeader] = useState(false)
+  const [report, setReport] = useState(false)
 
   const navigate = useNavigate()
 
@@ -41,7 +47,7 @@ const user = JSON.parse(localStorage.getItem('user'))
         setShowBuy(!user.ispremiumuser);
 
         // Fetch expenses data
-        const expensesResponse = await axios.get('http://localhost:3000/api/expense/getexpense', {
+        const expensesResponse = await axios.get('http://3.111.217.82:3000/api/expense/getexpense', {
           headers: {
             Authorization: token,
           },
@@ -57,7 +63,11 @@ const user = JSON.parse(localStorage.getItem('user'))
   }, [localStorage.getItem('user')]);
 
 
-
+const toggleEditState = (index) => {
+  const newEditState = [...editState]
+  newEditState[index] = !newEditState[index]
+  setEditState(newEditState)
+}
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -66,19 +76,40 @@ const user = JSON.parse(localStorage.getItem('user'))
 
     const token = localStorage.getItem('token'); // Get the token from local storage
 
+    const currentDate = new Date();
+    const day = currentDate.getDate();
+    const month = currentDate.getMonth() + 1;
+    const year = currentDate.getFullYear();
+
+    // add leading zeros to day and month if needed
+    const formattedDay = day < 10 ? `0${day}` : day;
+    const formattedMonth = month < 10 ? `0${month}` : month;
+
+    // create the date string in date-month-year format
+    const dateStr = `${formattedDay}-${formattedMonth}-${year}`;
+
     // add expense on form submission with the token in headers
-    axios.post('http://localhost:3000/api/expense/addexpense', { amount, description, category }, {
+    axios.post('http://3.111.217.82:3000/api/expense/addexpense', { amount, description, category,date:dateStr }, {
       headers: {
         Authorization: token, // Pass the token in the Authorization header
       },
     })
       .then(response => {
       
-        // const updatedExpenses = [...expenses]
-        // updatedExpenses.unshift(response.data)
-        setExpenses(expenses => [...expenses, response.data]);
+        const updatedExpenses = [...expenses]
+        updatedExpenses.unshift(response.data)
+        // setExpenses(expenses => [...expenses, response.data]);
         // setExpenses(updatedExpenses)
         // Reset form fields
+
+         // Check if the total number of expenses exceeds the current page's limit
+         if (updatedExpenses.length > limit) {
+          // Fetch the latest expenses with updated pagination
+          getPaginatedExpenses();
+      } else {
+          // Update the expenses state without fetching
+          setExpenses(updatedExpenses);
+      }
         setAmount('');
         setDescription('');
         setCategory('Food');
@@ -96,13 +127,22 @@ const user = JSON.parse(localStorage.getItem('user'))
   const deleteExpense = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      const response = await axios.delete(`http://localhost:3000/api/expense/${id}`, {
+      const response = await axios.delete(`http://3.111.217.82:3000/api/expense/${id}`, {
         headers: {
           Authorization: token
         }
       })
       if (response.status === 204) {
         setExpenses((prevState) => prevState.filter((expense) => expense.id !== id))
+        // Check if the total number of expenses after deletion falls below the limit
+      //   if (expenses.length - 1 < limit * (currentPage.current - 1)) {
+      //     // Fetch the latest expenses with updated pagination
+      //     getPaginatedExpenses();
+      // } else {
+      //     // Update the expenses state without fetching
+      //     setExpenses((prevState) => prevState.filter((expense) => expense.id !== id));
+      // }
+      getPaginatedExpenses()
       }
 
     } catch (err) {
@@ -110,114 +150,39 @@ const user = JSON.parse(localStorage.getItem('user'))
     }
   }
 
-  const handleBuy = async (e) => {
-    const userString = localStorage.getItem('user')
-    const user = JSON.parse(userString)
-
-    const token = localStorage.getItem('token')
-    const { data: { key } } = await axios.get('http://localhost:3000/api/getkey')
-    //  const {data : {order}} = await axios.post('http://localhost:3000/api/checkout',{
-    //   amount 
-
-    //  })
-    const response = await axios.post('http://localhost:3000/api/checkout', {}, {
-      headers: {
-        Authorization: token
-      }
-    })
-    console.log(response)
-    const { data: { order } } = response
-    const options = {
-      key: key, // Enter the Key ID generated from the Dashboard
-      amount: "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-      currency: "INR",
-      name: user.name,
-      description: "Test Transaction",
-      image: "https://example.com/your_logo",
-      order_id: order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-      // callback_url : "http://localhost:3000/api/paymentverification",
-      handler: async function (response) {
-
-
-
-        const res = await axios.post('http://localhost:3000/api/updatetransactionstatus', {
-          order_id: options.order_id,
-          payment_id: response.razorpay_payment_id,
-          signature_id: response.razorpay_signature_id,
-        }, { headers: { Authorization: token } })
-
-
-        alert('You are a Premium User')
-        setShowBuy(false)
-        setIsPremium(true)
-        localStorage.setItem('token', res.data.token)
-
-        const userStr = localStorage.getItem('user');
-        const userObj = JSON.parse(userStr);
-        userObj.ispremiumuser = true; // 
-
-        const updatedUserString = JSON.stringify(userObj);
-        localStorage.setItem('user', updatedUserString);
-
-
-
-
-
-
-
-
-      },
-      prefill: {
-        name: "Gaurav Kumar",
-        email: "gaurav.kumar@example.com",
-        contact: "9000090000"
-      },
-      notes: {
-        address: "Razorpay Corporate Office"
-      },
-      theme: {
-        "color": "#3399cc"
-      }
-    };
-    const razor = new window.Razorpay(options);
-
-
-    razor.open();
-
-
-    razor.on('payment.failed', function (response) {
-      console.log(response)
-      alert('something went wrong')
-    })
-  }
-
-
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-
-    navigate('/login')
-  }
-
-
-
-  const handleLeader = async () => {
-    try{ 
+  const editExpense = async(id,e) => {
+    try {
+      // deleteExpense(id)
+      console.log(e)
       const token = localStorage.getItem('token')
-      const response = await axios.get('http://localhost:3000/api/premium/showleaderboard',{
-        headers: {
-          Authorization: token
-        }
-      })
-      setLeaderboard(response.data)
+     const response = await axios.get(`http://3.111.217.82:3000/api/expense/getexpense/${id}`,{
+      headers: {
+        Authorization : token
+      }
+     })
+     console.log(response.data)
+     setAmount(response.data.amount)
+     setCategory(response.data.category)
+     setDescription(response.data.description)
 
-      
-      console.log(response)
+
+
+   
     }catch(err) {
-      console.log(err)
+
     }
   }
+
+ const handleSave = async(e) => {
+e.preventDefault()
+ }
+
+
+
+
+
+
+  
 
 
 
@@ -239,7 +204,7 @@ const user = JSON.parse(localStorage.getItem('user'))
       setShowBuy(!user.ispremiumuser);
 
       // Fetch expenses data
-      const response = await axios.get(`http://localhost:3000/api/expense/paginated?page=${currentPage.current}&limit=${limit}`, {
+      const response = await axios.get(`http://3.111.217.82:3000/api/expense/paginated?page=${currentPage.current}&limit=${limit}`, {
         headers: {
           Authorization: token,
         },
@@ -252,14 +217,19 @@ const user = JSON.parse(localStorage.getItem('user'))
     }
   }
 
+ 
+
   const changeLimit = () => {
-    getPaginatedExpenses()
+  
+
+      getPaginatedExpenses()
+    
   }
 
   return (
     <>
         {/* <div className="container-fluid d-flex justify-content-center align-items-center"> */}
-      <nav className="navbar justify-content-center main-nav">
+      {/* <nav className="navbar justify-content-center main-nav">
 
         <div className='d-flex justify-content-center align-items-center text-center mt-2'>
           <span className="navbar-brand mb-0  text-center"><h1 className="fw-light expense-title mx-3" style={{}}><span style={{ color: "teal" }}>E</span>xpense <span style={{ color: "teal" }}>T</span>racker</h1></span>
@@ -267,7 +237,8 @@ const user = JSON.parse(localStorage.getItem('user'))
         </div>
        
       <button className='btn btn-outline-dark text-danger rounded-5 mx-2 py-2 px-5' onClick={() => handleLogout()}>Logout</button>
-      </nav>
+      </nav> */}
+      <Navbar />
     
 
       <h3 className='mt-5 text-center fw-light'>Welcome {user.name}!</h3>
@@ -292,7 +263,7 @@ const user = JSON.parse(localStorage.getItem('user'))
       </div>
 
 
-      {isPremium && (<><div className='container-fluid d-flex justify-content-center align-items-center mt-2'>
+      {/* {(<><div className='container-fluid d-flex justify-content-center align-items-center mt-2'>
         <button className='btn btn-outline-dark rounded-5 text-warning pt-2 px-5' onClick={() => {
           setLeader(prev => !prev)
           handleLeader()
@@ -305,7 +276,19 @@ const user = JSON.parse(localStorage.getItem('user'))
       
      
       </>
-      )}
+      )} */}
+
+{/* {(<><div className='container-fluid d-flex justify-content-center align-items-center mt-2'>
+        <button className='btn btn-outline-dark rounded-5 text-warning pt-2 px-5' onClick={handleLeader}>
+          {leader ? 'HIDE LEADERBOARD' : 'SHOW LEADERBOARD'}
+          
+          </button>
+          
+      </div>
+      
+     
+      </>
+      )} */}
       <br />
       {/* {leader && (
         <div className='contianer-fluid d-flex justify-content-center align-items-center'>
@@ -318,15 +301,15 @@ const user = JSON.parse(localStorage.getItem('user'))
       {leader && (
         <>
     <div className='container-fluid d-flex justify-content-center align-items-center'>
-        <h1>LeaderBoard Page</h1>
+        {isPremium && (<h1>LeaderBoard: </h1>)}
         <br />
        
     </div>
 
         <ul className="list-group">
-            {leaderboard.map(item => (
+            {isPremium ? leaderboard.map(item => (
                 <li key={item.id} className="list-group-item"><b>Name:</b> {item.name}, <b>Expenses</b> {item.totalexpenses}</li>
-            ))}
+            )): <p>You are not a premium user</p> }
         </ul>
        </>
 )}
@@ -360,6 +343,9 @@ const user = JSON.parse(localStorage.getItem('user'))
           </div>
           <div className='d-flex justify-content-center'>
           {/* <div className="col-12"> */}
+            
+            
+              {/* <button type="btn" className="btn btn-dark mt-3 rounded-5 py-3 px-5" onClick={handleSave}>Save</button> */}
             <button type="submit" className="btn btn-dark mt-3 rounded-5 py-3 px-5">+ Add Expense</button>
           </div>
           {/* </div> */}
@@ -384,7 +370,7 @@ const user = JSON.parse(localStorage.getItem('user'))
             </li>
           )) : <h2 className='fw-light text-center mt-5'>No Expenses Added</h2> }
         </ul> */}
-         <div className="container mt-4 p-3 " id="table">
+         <div className="container mt-4 p-3 justify-content-evenly" id="table">
     <table id="example" className="table table-hover" style={{ width: '100%' }}>
       <thead id="tableHead">
         <tr>
@@ -398,14 +384,21 @@ const user = JSON.parse(localStorage.getItem('user'))
       {/* <br /> */}
       
       <tbody id="tbodyId">
-      {expenses.map(expense => (
+      {expenses.map((expense,index) => (
     <tr key={expense.id}>
-      <td><h5 className='fw-light mt-2'>{expense.createdAt.slice(0,-14)}</h5></td>
+      <td><h5 className='fw-light mt-2'>{expense.createdAt.slice(0,-14).toString().split('-').reverse().join('-')}</h5></td>
       <td> <h5 className='fw-light mt-2'>{expense.amount}</h5></td>
       <td> <h5 className='fw-light mt-2'>{expense.description}</h5></td>
       <td> <h5 className='fw-light mt-2'>{expense.category}</h5></td>
       <td>
-        <button className="editDelete btn btn-secondary rounded-5 mx-2">Edit</button>
+        {showEdit && (<button className="editDelete btn btn-secondary rounded-5 mx-2" onClick={() => {
+          // toggleEditState(index)
+          // if(!editState[index])
+          // editExpense(expense.id)
+          navigate(`/edit/${expense.id}`)
+         
+          }}>Edit</button>)}
+      
         <button className='btn btn-danger mx-2 rounded-5' onClick={() => deleteExpense(expense.id)}>Delete</button>
       </td>
     </tr>
@@ -414,7 +407,7 @@ const user = JSON.parse(localStorage.getItem('user'))
     </table>
     
     {!expenses.length && (
-      <h2 className='fw-light text-center mt-5'>No expenses added</h2>
+      <h2 className='fw-light text-center mt-5'>No expenses to show</h2>
     )}
 </div>
 <br />
@@ -439,17 +432,19 @@ const user = JSON.parse(localStorage.getItem('user'))
             nextLinkClassName="page-link"
             activeClassName="active"
       />
-      <input type ='text' onChange={e => setLimit(e.target.value)}/>
+      <input type ='number' onChange={e => setLimit(e.target.value)}/>
         <button className='btn btn-outline-dark rounded-2 mx-2' onClick={changeLimit}>Set Limit per page</button>
       </div>
 
-      {isPremium && (
+      {/* { (
+
         <div className='container-fluid d-flex justify-content-center align-items-center mt-4'> <button className='btn btn-success rounded-5 mb-5' onClick={() => navigate('/report')}>Generate Report</button></div>
       )}
+
       {showBuy && (
 <div className='container-fluid d-flex justify-content-center align-items-center mb-4'><button className='btn btn-outline-dark text-warning rounded-5 mx-2 py-2 px-5 mt-3' onClick={() => handleBuy(50)}>Buy Premium <FontAwesomeIcon icon={faCrown} /></button></div>
 
-)}
+)} */}
     </>
   );
 };

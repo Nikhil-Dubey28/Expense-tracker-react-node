@@ -36,7 +36,7 @@ const Signup =() =>{
         event.preventDefault();
       
         try {
-          const response = await axios.post('http://localhost:3000/api/users/signup', formData);
+          const response = await axios.post('http://3.111.217.82:3000/api/users/signup', formData);
           console.log(response.data);
           if(response.status === 201){
             navigate('/login')
@@ -73,6 +73,12 @@ const Signup =() =>{
                 </div>
               
             </form>
+              <p className='text-center'>Already have an account?</p>
+              <div className='contianer d-flex justify-content-center'>
+
+              <button className='btn btn-light rounded-5 w-75 mt-2'  onClick={() => navigate('/login')}>Click here to go to login page</button>
+              </div>
+              
           </div>
         </div>
       </div>

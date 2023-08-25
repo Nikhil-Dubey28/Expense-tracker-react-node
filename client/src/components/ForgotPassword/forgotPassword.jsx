@@ -18,7 +18,7 @@ const [isSuccess, setIsSuccess] = useState(false);
         e.preventDefault()
         try {
           
-         const res =  await axios.post('http://localhost:3000/api/password/forgotpassword',formData)
+         const res =  await axios.post('http://3.111.217.82:3000/api/password/forgotpassword',formData)
           console.log(res)
          if(res.status === 202){
           setIsSuccess(true)

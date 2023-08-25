@@ -33,26 +33,33 @@ const Login =() =>{
       
         try {
           
-          const response = await axios.post('http://localhost:3000/api/users/login', formData);
-          console.log(response);
-          console.log(response.headers)
+          const response = await axios.post('http://3.111.217.82:3000/api/users/login', formData);
+          // console.log(response);
+          // console.log(response.headers)
           
-          const token = response.data.token
-          const user = response.data.user
-          console.log(token)
           if(response.status===200&&response.data.message === "User login successful"){
+            const token = response.data.token
+            const user = response.data.user
+            console.log(token)
             
             console.log('login successful')
             console.log(response.headers)
             localStorage.setItem('token',token );
             localStorage.setItem('user',JSON.stringify(user))
+            alert('user login successful')
             navigate('/expenses')
-          }else{
-            console.log('login failed')
-            alert('wrong credentials')
           }
         } catch (error) {
-          console.log(error.response);
+          
+        if (error.response.status === 404 && error.response.data.message === 'wrong email') {
+          console.log('Wrong email detected');
+          alert('wrong email');
+      } else if (error.response.status === 401 && error.response.data.message === 'wrong password') {
+          console.log('Wrong password detected');
+          alert('wrong password');
+      } else {
+          console.log('Unexpected error response:', error.response.data);
+      }
         }
       }
       

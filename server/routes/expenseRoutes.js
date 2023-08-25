@@ -17,5 +17,10 @@ router.get('/expense/paginated',authenticate,expenseController.paginatedExpense)
 //delete expense
 router.delete('/expense/:id',authenticate,expenseController.deleteExpense)
 
+//edit expense
+router.patch('/expense/edit/:id',authenticate,expenseController.editExpense)
+
+//GET BY ID 
+router.get('/expense/getexpense/:id',authenticate,expenseController.getExpenseById)
 
 module.exports = router
