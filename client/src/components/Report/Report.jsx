@@ -18,7 +18,7 @@ const Report = () => {
 try {
   const token = localStorage.getItem('token')
 
-  const response = await axios.post('http://3.111.217.82:3000/api/premium/dailyreports',{date: selectedDate},{
+  const response = await axios.post('http://localhost:3000/api/premium/dailyreports',{date: selectedDate},{
     headers : {
       Authorization :token
     }

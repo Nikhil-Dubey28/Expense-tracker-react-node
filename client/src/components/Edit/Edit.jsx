@@ -14,7 +14,7 @@ const Edit = () => {
         const fetch = async () => {
             try {
                 const token = localStorage.getItem('token')
-                const response = await axios.get(`http://3.111.217.82:3000/api/expense/getexpense/${id}`,{
+                const response = await axios.get(`http://localhost:3000/api/expense/getexpense/${id}`,{
                     headers: {
                         Authorization :token
                     }
@@ -45,7 +45,7 @@ const Edit = () => {
             }
 
 
-            const response = await axios.patch(`http://3.111.217.82:3000/api/expense/edit/${id}`,updatedExpenses, {
+            const response = await axios.patch(`http://localhost:3000/api/expense/edit/${id}`,updatedExpenses, {
                 headers: {
                     Authorization: token
                 }
@@ -53,7 +53,7 @@ const Edit = () => {
             console.log(response)
             if(response.status === 200) {
                 alert('changes saved successfully')
-                navigate('/expenses')
+                navigate('/')
             }
         }catch(err) {
 
@@ -80,11 +80,17 @@ const Edit = () => {
           <div className="col-sm mx-2 rounded-2 px-3 py-2 div-category">
             <label htmlFor="category" className="form-label"></label>
             <select className="form-select mb-3" id="category" name='category' value={category} onChange={event => setCategory(event.target.value)}>
+              
               <option>Food</option>
+              <option>Bills</option>
+              <option>Recharge</option>
               <option>Fuel</option>
               <option>Electronics</option>
               <option>Movie</option>
               <option>Grocery</option>
+              <option>Transport</option>
+              <option>Clothing</option>
+              <option>Vacation</option>
               <option>Others</option>
             </select>
           </div>
@@ -100,7 +106,7 @@ const Edit = () => {
           {/* </div> */}
         </form>
         </div>
-        <div className='container d-flex'><button className='btn btn-outline-dark' onClick={() => navigate('/expenses')}>Click here to go back</button></div>
+        <div className='container d-flex'><button className='btn btn-outline-dark' onClick={() => navigate('/')}>Click here to go back</button></div>
 
 </>
   )

@@ -39,8 +39,10 @@ const forgotPassword = async (req,res) => {
         tranEmailApi.sendTransacEmail( {
                 sender,
                 to: receivers,
-                subject: 'Sending with brevo is Fun',
-                htmlContent: `<a href="http://localhost:3000/api/password/resetpassword/${id}">Reset password</a>`,
+                subject: 'Reset Password Link',
+                htmlContent: `
+                <p>Here is the link to reset your password:</p>
+                <a href="http://localhost:3000/api/password/resetpassword/${id}">Reset password</a>`,
             })
             .then((response) => {
                 console.log(response)

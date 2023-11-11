@@ -36,9 +36,10 @@ const Signup =() =>{
         event.preventDefault();
       
         try {
-          const response = await axios.post('http://3.111.217.82:3000/api/users/signup', formData);
+          const response = await axios.post('http://localhost:3000/api/users/signup', formData);
           console.log(response.data);
           if(response.status === 201){
+            alert('User signup successful')
             navigate('/login')
           }
         } catch (error) {

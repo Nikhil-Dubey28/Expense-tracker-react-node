@@ -11,6 +11,8 @@ router.post('/expense/addexpense', authenticate,expenseController.createExpense)
 //get expense
 router.get('/expense/getexpense',authenticate, expenseController.getExpense)
 
+router.get('/expense/download', authenticate, expenseController.downloadExpense)
+
 //paginated expenses
 router.get('/expense/paginated',authenticate,expenseController.paginatedExpense)
 

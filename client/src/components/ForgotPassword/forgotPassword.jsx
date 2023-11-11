@@ -18,7 +18,7 @@ const [isSuccess, setIsSuccess] = useState(false);
         e.preventDefault()
         try {
           
-         const res =  await axios.post('http://3.111.217.82:3000/api/password/forgotpassword',formData)
+         const res =  await axios.post('http://localhost:3000/api/password/forgotpassword',formData)
           console.log(res)
          if(res.status === 202){
           setIsSuccess(true)
@@ -39,7 +39,11 @@ const [isSuccess, setIsSuccess] = useState(false);
         <div className='form-container'>
         <form className="p-5 bg-light" onSubmit={handleSubmit}>
         <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email:</label>
+          <h3>Forgot Password</h3>
+          <br />
+                <p className='text-success'>You will get a link to reset your password at the specified email address.</p>
+                <br />
+                <label htmlFor="email" className="form-label">Please enter your Email:</label>
                 <input type="email" className="form-control" id="email" placeholder="Enter email" name='email' required onChange={handleEmailChange} />
               </div>
               <div className='d-flex justify-content-center'>

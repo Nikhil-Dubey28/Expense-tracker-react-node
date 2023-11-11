@@ -26,3 +26,4 @@ const resetPassword = () => {
 }
 
 export default resetPassword
+

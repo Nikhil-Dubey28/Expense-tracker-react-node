@@ -87,7 +87,7 @@ res.status(500).json({message: 'internal server error'})
 const dailyReports = async (req,res) => {
     try {
         const {date} = req.body
-        // Convert the date from 'dd-mm-yyyy' to 'yyyy-mm-dd' format
+       
         const [day, month, year] = date.split('-');
         const formattedDate = `${year}-${month}-${day}`;
 

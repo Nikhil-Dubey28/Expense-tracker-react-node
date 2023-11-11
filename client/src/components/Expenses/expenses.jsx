@@ -13,7 +13,7 @@ import Navbar from '../Navbar/Navbar';
 
 const Expenses = () => {
   const [showEdit, setShowEdit] = useState(true)
-  const [showSave,setShowSave] = useState(false)
+  
   const [expenses, setExpenses] = useState([]);
   const [editState , setEditState] = useState(expenses.map(() => false))
   const [pageCount, setPageCount]= useState(1)
@@ -22,7 +22,7 @@ const Expenses = () => {
   const [leaderboard, setLeaderboard] = useState([])
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('Food');
+  const [category, setCategory] = useState('');
   
   const [error, setError] = useState(null);
   const [isPremium, setIsPremium] = useState(false)
@@ -47,7 +47,7 @@ const user = JSON.parse(localStorage.getItem('user'))
         setShowBuy(!user.ispremiumuser);
 
         // Fetch expenses data
-        const expensesResponse = await axios.get('http://3.111.217.82:3000/api/expense/getexpense', {
+        const expensesResponse = await axios.get('http://localhost:3000/api/expense/getexpense', {
           headers: {
             Authorization: token,
           },
@@ -81,17 +81,16 @@ const toggleEditState = (index) => {
     const month = currentDate.getMonth() + 1;
     const year = currentDate.getFullYear();
 
-    // add leading zeros to day and month if needed
+    
     const formattedDay = day < 10 ? `0${day}` : day;
     const formattedMonth = month < 10 ? `0${month}` : month;
 
-    // create the date string in date-month-year format
     const dateStr = `${formattedDay}-${formattedMonth}-${year}`;
 
-    // add expense on form submission with the token in headers
-    axios.post('http://3.111.217.82:3000/api/expense/addexpense', { amount, description, category,date:dateStr }, {
+   
+    axios.post('http://localhost:3000/api/expense/addexpense', { amount, description, category,date:dateStr }, {
       headers: {
-        Authorization: token, // Pass the token in the Authorization header
+        Authorization: token, 
       },
     })
       .then(response => {
@@ -101,18 +100,17 @@ const toggleEditState = (index) => {
         // setExpenses(expenses => [...expenses, response.data]);
         // setExpenses(updatedExpenses)
         // Reset form fields
+        setExpenses(updatedExpenses);
 
-         // Check if the total number of expenses exceeds the current page's limit
+        
          if (updatedExpenses.length > limit) {
-          // Fetch the latest expenses with updated pagination
+          
           getPaginatedExpenses();
-      } else {
-          // Update the expenses state without fetching
-          setExpenses(updatedExpenses);
-      }
+      } 
+      
         setAmount('');
         setDescription('');
-        setCategory('Food');
+        setCategory('');
       })
       .catch(error => {
       
@@ -127,21 +125,14 @@ const toggleEditState = (index) => {
   const deleteExpense = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      const response = await axios.delete(`http://3.111.217.82:3000/api/expense/${id}`, {
+      const response = await axios.delete(`http://localhost:3000/api/expense/${id}`, {
         headers: {
           Authorization: token
         }
       })
       if (response.status === 204) {
         setExpenses((prevState) => prevState.filter((expense) => expense.id !== id))
-        // Check if the total number of expenses after deletion falls below the limit
-      //   if (expenses.length - 1 < limit * (currentPage.current - 1)) {
-      //     // Fetch the latest expenses with updated pagination
-      //     getPaginatedExpenses();
-      // } else {
-      //     // Update the expenses state without fetching
-      //     setExpenses((prevState) => prevState.filter((expense) => expense.id !== id));
-      // }
+       
       getPaginatedExpenses()
       }
 
@@ -155,7 +146,7 @@ const toggleEditState = (index) => {
       // deleteExpense(id)
       console.log(e)
       const token = localStorage.getItem('token')
-     const response = await axios.get(`http://3.111.217.82:3000/api/expense/getexpense/${id}`,{
+     const response = await axios.get(`http://localhost:3000/api/expense/getexpense/${id}`,{
       headers: {
         Authorization : token
       }
@@ -172,18 +163,6 @@ const toggleEditState = (index) => {
 
     }
   }
-
- const handleSave = async(e) => {
-e.preventDefault()
- }
-
-
-
-
-
-
-  
-
 
 
   const handlePageClick = async(e) => {
@@ -204,7 +183,7 @@ e.preventDefault()
       setShowBuy(!user.ispremiumuser);
 
       // Fetch expenses data
-      const response = await axios.get(`http://3.111.217.82:3000/api/expense/paginated?page=${currentPage.current}&limit=${limit}`, {
+      const response = await axios.get(`http://localhost:3000/api/expense/paginated?page=${currentPage.current}&limit=${limit}`, {
         headers: {
           Authorization: token,
         },
@@ -226,26 +205,18 @@ e.preventDefault()
     
   }
 
+
+
+
+  
   return (
     <>
-        {/* <div className="container-fluid d-flex justify-content-center align-items-center"> */}
-      {/* <nav className="navbar justify-content-center main-nav">
-
-        <div className='d-flex justify-content-center align-items-center text-center mt-2'>
-          <span className="navbar-brand mb-0  text-center"><h1 className="fw-light expense-title mx-3" style={{}}><span style={{ color: "teal" }}>E</span>xpense <span style={{ color: "teal" }}>T</span>racker</h1></span>
-
-        </div>
-       
-      <button className='btn btn-outline-dark text-danger rounded-5 mx-2 py-2 px-5' onClick={() => handleLogout()}>Logout</button>
-      </nav> */}
+      
       <Navbar />
     
 
       <h3 className='mt-5 text-center fw-light'>Welcome {user.name}!</h3>
-        {/* {showBuy && (
-
-          <button className='btn btn-outline-dark text-warning rounded-5 mx-2 py-2 px-5 mt-3' onClick={() => handleBuy(50)}>Buy Premium <FontAwesomeIcon icon={faCrown} /></button>
-        )} */}
+       
         
 
 
@@ -263,41 +234,10 @@ e.preventDefault()
       </div>
 
 
-      {/* {(<><div className='container-fluid d-flex justify-content-center align-items-center mt-2'>
-        <button className='btn btn-outline-dark rounded-5 text-warning pt-2 px-5' onClick={() => {
-          setLeader(prev => !prev)
-          handleLeader()
-          }}>
-          {leader ? 'HIDE LEADERBOARD' : 'SHOW LEADERBOARD'}
-          
-          </button>
-          
-      </div>
       
-     
-      </>
-      )} */}
 
-{/* {(<><div className='container-fluid d-flex justify-content-center align-items-center mt-2'>
-        <button className='btn btn-outline-dark rounded-5 text-warning pt-2 px-5' onClick={handleLeader}>
-          {leader ? 'HIDE LEADERBOARD' : 'SHOW LEADERBOARD'}
-          
-          </button>
-          
-      </div>
-      
-     
-      </>
-      )} */}
       <br />
-      {/* {leader && (
-        <div className='contianer-fluid d-flex justify-content-center align-items-center'>
-          <h1>LeaderBoard Page</h1>
-        {leaderboard.map(item => (
-           <li key={item.id} className="list-group-item"></li>
-        ))}
-        </div>
-      )} */}
+     
       {leader && (
         <>
     <div className='container-fluid d-flex justify-content-center align-items-center'>
@@ -333,19 +273,25 @@ e.preventDefault()
           <div className="col-sm mx-2 rounded-2 px-3 py-2 div-category">
             <label htmlFor="category" className="form-label"></label>
             <select className="form-select mb-3" id="category" name='category' value={category} onChange={event => setCategory(event.target.value)}>
+            <option disabled value=''>Choose a category</option>
               <option>Food</option>
+              <option>Bills</option>
+              <option>Recharge</option>
               <option>Fuel</option>
               <option>Electronics</option>
               <option>Movie</option>
               <option>Grocery</option>
+              <option>Transport</option>
+              <option>Clothing</option>
+              <option>Vacation</option>
               <option>Others</option>
             </select>
           </div>
           <div className='d-flex justify-content-center'>
-          {/* <div className="col-12"> */}
+        
             
             
-              {/* <button type="btn" className="btn btn-dark mt-3 rounded-5 py-3 px-5" onClick={handleSave}>Save</button> */}
+            
             <button type="submit" className="btn btn-dark mt-3 rounded-5 py-3 px-5">+ Add Expense</button>
           </div>
           {/* </div> */}
@@ -391,7 +337,7 @@ e.preventDefault()
       <td> <h5 className='fw-light mt-2'>{expense.description}</h5></td>
       <td> <h5 className='fw-light mt-2'>{expense.category}</h5></td>
       <td>
-        {showEdit && (<button className="editDelete btn btn-secondary rounded-5 mx-2" onClick={() => {
+        {showEdit && (<button className="editDelete btn btn-secondary rounded-5 mx-2 mb-1" onClick={() => {
           // toggleEditState(index)
           // if(!editState[index])
           // editExpense(expense.id)
@@ -436,19 +382,18 @@ e.preventDefault()
         <button className='btn btn-outline-dark rounded-2 mx-2' onClick={changeLimit}>Set Limit per page</button>
       </div>
 
-      {/* { (
+      
 
-        <div className='container-fluid d-flex justify-content-center align-items-center mt-4'> <button className='btn btn-success rounded-5 mb-5' onClick={() => navigate('/report')}>Generate Report</button></div>
-      )}
+        
+      
 
-      {showBuy && (
-<div className='container-fluid d-flex justify-content-center align-items-center mb-4'><button className='btn btn-outline-dark text-warning rounded-5 mx-2 py-2 px-5 mt-3' onClick={() => handleBuy(50)}>Buy Premium <FontAwesomeIcon icon={faCrown} /></button></div>
-
-)} */}
+   
     </>
   );
 };
 
 export default Expenses;
+
+
 
 

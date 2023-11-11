@@ -33,7 +33,7 @@ const Login =() =>{
       
         try {
           
-          const response = await axios.post('http://3.111.217.82:3000/api/users/login', formData);
+          const response = await axios.post('http://localhost:3000/api/users/login', formData);
           // console.log(response);
           // console.log(response.headers)
           
@@ -47,7 +47,7 @@ const Login =() =>{
             localStorage.setItem('token',token );
             localStorage.setItem('user',JSON.stringify(user))
             alert('user login successful')
-            navigate('/expenses')
+            navigate('/')
           }
         } catch (error) {
           

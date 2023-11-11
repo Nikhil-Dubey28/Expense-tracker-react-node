@@ -1,6 +1,8 @@
 const sequelize = require('../database/configDatabase')
 const Expense = require('../model/Expense')
 const User = require('../model/User')
+const AWS = require('aws-sdk')
+
 
 
 
@@ -11,7 +13,7 @@ const createExpense = async(req,res) => {
     try {
         const {amount,description,category,date} = req.body  
 
-        const newExpense = await Expense.create({amount,description,category,date, userId: req.userId, order : [['date','DESC']]},{t})
+        const newExpense = await Expense.create({amount,description,category,date, userId: req.userId, order : [['createdAt','DESC']]},{t})
 
 
         const user = await User.findByPk(req.userId)
@@ -60,10 +62,73 @@ const getExpenseById = async (req, res) => {
     }
 };
 
+
+const uploadToS3 = async (data,filename) => {
+const BUCKET_NAME = process.env.BUCKET_NAME
+const IAM_USER_KEY = process.env.IAM_USER_KEY
+const IAM_USER_SECRET = process.env.IAM_USER_SECRET
+
+let s3Bucket = new AWS.S3({
+    accessKeyId: IAM_USER_KEY,
+    secretAccessKey: IAM_USER_SECRET,
+    Bucket: BUCKET_NAME
+})
+
+
+      var params = {
+        Bucket: BUCKET_NAME,
+        Key: filename,
+        Body: data,
+        ACL: 'public-read'
+      }
+
+      return new Promise((resolve, reject) => {
+        
+          s3Bucket.upload(params , (err,s3response) => {
+            if(err) {
+                console.log('something went wrong', err)
+                reject(err)
+            }else{
+                console.log('success',s3response)
+                resolve(s3response.Location)
+            }
+          })
+      })
+
+
+
+}
+
+const downloadExpense = async(req,res) => {
+    try {
+        
+    const expenses = await Expense.findAll({where: {userId: req.userId},
+    attributes: ['date','amount','description','category']
+    })
+    console.log(expenses)
+    const stringifiedExpenses = JSON.stringify(expenses);
+
+    const userId = req.userId
+
+    const filename = `Expenses${userId}/${new Date()}.txt`;
+    const fileURL = await uploadToS3(stringifiedExpenses,filename)
+
+
+    
+
+    res.status(200).json({fileURL,success:true})
+
+}catch(err) {
+    res.status(500).json({fileURL: '', success:false, err:err})
+}
+    
+}
+
+
 const paginatedExpense = async(req,res) => {
     try {
         const expenses = await Expense.findAll({where: {userId: req.userId},
-            order: [['date','DESC']]
+            order: [['createdAt','DESC']]
          } )
         const page = parseInt(req.query.page)
         const limit = parseInt(req.query.limit)
@@ -168,7 +233,8 @@ module.exports = {
     deleteExpense,
     paginatedExpense,
     editExpense,
-    getExpenseById
+    getExpenseById,
+    downloadExpense
 }
 
 

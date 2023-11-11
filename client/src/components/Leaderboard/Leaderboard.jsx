@@ -23,7 +23,7 @@ const Leaderboard = () => {
     const fetchLeaderboard = async () => {
         try {
             const token = localStorage.getItem('token')
-          const response = await axios.get(`http://3.111.217.82:3000/api/premium/showleaderboard?page=${currentPage.current}&limit=${limit}`, {
+          const response = await axios.get(`http://localhost:3000/api/premium/showleaderboard?page=${currentPage.current}&limit=${limit}`, {
             headers: {
               Authorization: token
             }

@@ -9,6 +9,7 @@ import ForgotPassword from './components/ForgotPassword/forgotPassword'
 import Report from './components/Report/Report'
 import Leaderboard from './components/Leaderboard/Leaderboard'
 import Edit from './components/Edit/Edit'
+import Download from './components/Download/Download'
 
 
 const ProtectedRoute = ({ element, ...rest }) => {
@@ -37,15 +38,16 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path= '/' element ={<h1>Home Page!</h1>}/>
+        {/* <Route path= '/' element ={<h1>Home Page!</h1>}/> */}
         <Route path= '/paymentsuccess' element ={<PaymentSuccess />}/>
         {/* <Route path= '/expenses' element ={<Expenses />} /> */}
-        <Route path="/expenses" element={<ProtectedRoute element={<Expenses />} />} />
+        <Route path="/" element={<ProtectedRoute element={<Expenses />} />} />
         <Route path='/signup' element = {<Signup />} />
         <Route path='/login' element = {<Login />}  />
         <Route path='/forgotpassword' element = {<ForgotPassword/>}  />
         <Route path='/report' element = {<ProtectedRoute element = {<Report/>} />}  />
         <Route path='/leaderboard' element = {<ProtectedRoute element = {<Leaderboard />}/>}  />
+        <Route path='/download' element = {<ProtectedRoute element = {<Download />}/>}  />
         <Route path='/edit/:id' element = {<ProtectedRoute element = {<Edit />}/>}  />
       </Routes>
     </Router>

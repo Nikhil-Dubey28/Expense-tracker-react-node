@@ -36,12 +36,12 @@ const Navbar = () => {
     const user = JSON.parse(userString)
 
     const token = localStorage.getItem('token')
-    const { data: { key } } = await axios.get('http://3.111.217.82:3000/api/getkey')
+    const { data: { key } } = await axios.get('http://localhost:3000/api/getkey')
     //  const {data : {order}} = await axios.post('http://localhost:3000/api/checkout',{
     //   amount 
 
     //  })
-    const response = await axios.post('http://3.111.217.82:3000/api/checkout', {}, {
+    const response = await axios.post('http://localhost:3000/api/checkout', {}, {
       headers: {
         Authorization: token
       }
@@ -61,7 +61,7 @@ const Navbar = () => {
 
 
 
-        const res = await axios.post('http://3.111.217.82:3000/api/updatetransactionstatus', {
+        const res = await axios.post('http://localhost:3000/api/updatetransactionstatus', {
           order_id: options.order_id,
           payment_id: response.razorpay_payment_id,
           signature_id: response.razorpay_signature_id,
@@ -115,7 +115,7 @@ const Navbar = () => {
 
   const handleLeader = () => {
     if(!isPremium){
-        alert('you are not a premium user')
+        alert('You need to buy premium to access this feature!')
     }else{
         navigate('/leaderboard')
     }
@@ -123,19 +123,27 @@ const Navbar = () => {
 
   const handleReport = () => {
     if(!isPremium) {
-        alert('you are not a premium user')
+        alert('You need to buy premium to access this feature!')
     }else{
         navigate('/report')
     }
   }
   
+  const handleDownload = () => {
+    if(!isPremium) {
+      alert('You need to buy premium to access this feature')
+    }else{
+      navigate('/download')
+    }
+  }
+
   return (
 
     <nav className="navbar navbar-expand-lg navbar-light bg-light main-nav">
     <div className="container-fluid">
       <span className="navbar-brand">
         <h1 className="fw-light expense-title mx-3">
-          <a href="/expenses" className='text-decoration-none' style={{color: "black"}}><span style={{ color: "teal" }}>E</span>xpense <span style={{ color: "teal" }}>T</span>racker</a>
+          <a href="/" className='text-decoration-none' style={{color: "black"}}><span style={{ color: "teal" }}>E</span>xpense <span style={{ color: "teal" }}>T</span>racker</a>
         </h1>
       </span>
       <button
@@ -152,14 +160,17 @@ const Navbar = () => {
       <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul className="navbar-nav">
           <li className="nav-item">
-            <button className="btn rounded-5 text-dark pt-2 px-3 mb-2 me-5" onClick={handleLeader}>Leaderboard <FontAwesomeIcon icon={faCrown} /></button>
+            <button className="btn rounded-5 text-dark pt-2 px-3 mb-2 me-5 btn-underline" onClick={handleLeader}>Leaderboard <FontAwesomeIcon icon={faCrown} /></button>
           </li>
           <li className="nav-item">
-            <button className="btn rounded-5 text-dark pt-2 px-3 mb-2 me-5" onClick={handleReport}>Reports <FontAwesomeIcon icon={faCrown} /></button>
+            <button className="btn rounded-5 text-dark pt-2 px-3 mb-2 me-5 btn-underline" onClick={handleReport}>Reports <FontAwesomeIcon icon={faCrown} /></button>
+          </li>
+          <li className="nav-item">
+            <button className="btn rounded-5 text-dark pt-2 px-3 mb-2 me-5 btn-underline" onClick={handleDownload}>Download <FontAwesomeIcon icon={faCrown} /></button>
           </li>
           {!isPremium && (
             <li className="nav-item">
-            <button className="btn btn-outline-dark rounded-5 text-warning pt-2 px-3 mb-2" onClick={ handleBuy}>Buy Premium <FontAwesomeIcon icon={faCrown} /></button>
+            <button className="btn btn-outline-dark rounded-5 text-warning pt-2 px-3 mb-2" onClick={handleBuy}>Buy Premium <FontAwesomeIcon icon={faCrown} /></button>
           </li>
           ) }
           <li className="nav-item">
